@@ -6,6 +6,7 @@ const connect = mongoose.connect(url, {
   useCreateIndex: true,
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  useFindAndModify:false
 });
 
 connect.then(() => {
@@ -16,14 +17,32 @@ connect.then(() => {
   })
     .then((campsite) => {
       console.log(campsite);
-      return Campsite.find();
+      return Campsite.findByIdAndUpdate(
+        campsite._id,
+        {
+          $set: { description: "Updated Test Document" },
+        },
+        {
+          new: true,
+        }
+      );
+    })
+    .then((campsite) => {
+      console.log(campsite);
+
+      campsite.comments.push({
+        rating: 5,
+        text: "What a manificant view!",
+        author: "Tinus Lorvaldes",
+      });
+      return campsite.save();
     })
     .then((campsites) => {
       console.log(campsites);
       return Campsite.description;
     })
-    .then((campsites) => {
-      console.log(campsites);
+    .then((campsite) => {
+      console.log(campsite);
       return Campsite.deleteMany();
     })
     .then(() => {
